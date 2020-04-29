@@ -113,7 +113,7 @@ function resolvePromise(promise2, x, resolve, reject) {
     if (x && typeof x === 'object' || typeof x === 'function') {
         let used; //PromiseA+2.3.3.3.3 只能调用一次
         try {
-            let then = promise2.then;
+            let then = x.then;
             if (typeof then === 'function') {
                 //PromiseA+2.3.3
                 then.call(x, (y) => {

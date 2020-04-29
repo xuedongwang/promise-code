@@ -9,7 +9,7 @@ class MyPromise {
 
     function resolve (value) {
       if (self.status === MyPromise.PENDING) {
-        self.status = Promise.PENDING;
+        self.status = Promise.FULFILLED;
         self.value = value;
         self.onFulfilled.forEach(fn => fn());
       }
@@ -31,44 +31,43 @@ class MyPromise {
   }
 
   then(onFulfilled, onRejected) {
-    console.log(1, typeof onFulfilled);
     onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
     onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason };
-    console.log(1-1, typeof onFulfilled);
+    const self = this;
     const promise2 = new MyPromise((resolve, reject) => {
-      if (this.status === MyPromise.FULFILLED) {
+      if (self.status === MyPromise.FULFILLED) {
         setTimeout(() => {
           try {
-            let x = onFulfilled(this.value);
+            let x = onFulfilled(self.value);
             resolvePromise(primise2, x, resolve, reject);
           } catch (error) {
             reject(error);
           }
         })
-      } else if (this.status === MyPromise.REJECTED) {
+      } else if (self.status === MyPromise.REJECTED) {
         setTimeout(() => {
           try {
-            let x = onRejected(this.reason);
+            let x = onRejected(self.reason);
             resolvePromise(primise2, x, resolve, reject);
           } catch (error) {
             reject(error);
           }
         })
-      } else if (this.status === MyPromise.PENDING) {
-        this.onFulfilled.push(() => {
+      } else if (self.status === MyPromise.PENDING) {
+        self.onFulfilled.push(() => {
           setTimeout(() => {
             try {
-              let x = onFulfilled(this.value);
+              let x = onFulfilled(self.value);
               resolvePromise(primise2, x, resolve, reject);
             } catch (error) {
               reject(error);
             }
           })
         });
-        this.onFulfilled.push(() => {
+        self.onFulfilled.push(() => {
           setTimeout(() => {
             try {
-              let x = onRejected(this.reason);
+              let x = onRejected(self.reason);
               resolvePromise(primise2, x, resolve, reject);
             } catch (error) {
               reject(error);
@@ -90,7 +89,7 @@ function resolvePromise (promise2, x, resolve, reject) {
   if (x && typeof x === 'object' || typeof x === 'function') {
     let used;
     try {
-      let then = promise2.then;
+      let then = x.then;
       if (typeof then === 'function') {
         then.call(x, y => {
           if (used) return;
