@@ -1,6 +1,9 @@
 {
   "name": "promise-code",
   "version": "1.0.0",
+  "engines": {
+    "node": "10.13.0"
+  },
   "description": "es6 class Promise",
   "main": "src/promise.js",
   "scripts": {

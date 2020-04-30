@@ -1,3 +1,8 @@
+![travis](https://travis-ci.com/xuedongwang/promise-code.svg?branch=master&status=passed)
+![license](https://img.shields.io/github/license/xuedongwang/promise-code)
+![code-size](https://img.shields.io/github/languages/code-size/xuedongwang/promise-code)
+## 项目名称
+### Promise-code ![star](https://img.shields.io/github/stars/xuedongwang/promise-code?style=social)
 ## 项目背景
 使用 `es6 class` 模拟 `Promise`，符合 `Promise+` 规范，完美通过所有单元测试。
 ## 使用
