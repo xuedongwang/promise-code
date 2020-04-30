@@ -19,8 +19,6 @@ $ npm run lint
 └── test
     └── index.js
 ```
-## 版本内容更新
-
 ## 单元测试库
 [promises-aplus-tests](https://github.com/promises-aplus/promises-tests)
 ## 开源协议

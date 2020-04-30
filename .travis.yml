@@ -10,7 +10,7 @@ install:
 script:
   - npm run test
 after_script:
-  - git clone https://${GH_REF} .temp
+  - git clone ${GH_REF} .temp
   - git config user.name "${U_NAME}"
   - git config user.email "${U_EMAIL}"
   - git add .
