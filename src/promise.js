@@ -1,3 +1,7 @@
+const PENDING = 'pending';
+const FULFILLED = 'fulfilled';
+const REJECTED = 'rejected';
+
 function resolvePromise(promise2, x, resolve, reject) {
   if (promise2 === x) {
     reject(new TypeError('Chaining cycle'));
@@ -34,19 +38,19 @@ function resolvePromise(promise2, x, resolve, reject) {
 class MyPromise {
   constructor(executor) {
     const self = this;
-    self.status = MyPromise.PENDING;
+    self.status = PENDING;
     self.onFulfilled = [];
     self.onRejected = [];
     function resolve(value) {
-      if (self.status === MyPromise.PENDING) {
-        self.status = MyPromise.FULFILLED;
+      if (self.status === PENDING) {
+        self.status = FULFILLED;
         self.value = value;
         self.onFulfilled.forEach((fn) => fn());
       }
     }
     function reject(reason) {
-      if (self.status === MyPromise.PENDING) {
-        self.status = MyPromise.REJECTED;
+      if (self.status === PENDING) {
+        self.status = REJECTED;
         self.reason = reason;
         self.onRejected.forEach((fn) => fn());
       }
@@ -62,7 +66,7 @@ class MyPromise {
     const onFulfilled = typeof onFulfilledFn === 'function' ? onFulfilledFn : (value) => value;
     const onRejected = typeof onRejectedFn === 'function' ? onRejectedFn : (reason) => { throw reason; };
     const promise2 = new Promise((resolve, reject) => {
-      if (this.status === MyPromise.FULFILLED) {
+      if (this.status === FULFILLED) {
         setTimeout(() => {
           try {
             const x = onFulfilled(this.value);
@@ -71,7 +75,7 @@ class MyPromise {
             reject(error);
           }
         });
-      } else if (this.status === MyPromise.REJECTED) {
+      } else if (this.status === REJECTED) {
         setTimeout(() => {
           try {
             const x = onRejected(this.reason);
@@ -80,7 +84,7 @@ class MyPromise {
             reject(error);
           }
         });
-      } else if (this.status === MyPromise.PENDING) {
+      } else if (this.status === PENDING) {
         this.onFulfilled.push(() => {
           setTimeout(() => {
             try {
@@ -105,11 +109,69 @@ class MyPromise {
     });
     return promise2;
   }
+
+  catch(onRejected) {
+    return this.then(null, onRejected);
+  }
+
+  finally(callback) {
+    return this.then(
+      (value) => MyPromise.resolve(callback()).then(() => value),
+      (error) => MyPromise.resolve(callback()).then(() => { throw error; }),
+    );
+  }
 }
 
-MyPromise.PENDING = 'pending';
-MyPromise.FULFILLED = 'fulfilled';
-MyPromise.REJECTED = 'rejected';
+MyPromise.resolve = (params) => {
+  if (params instanceof MyPromise) {
+    return params;
+  }
+  return new MyPromise((resolve, reject) => {
+    if (params && params.then && typeof params === 'function') {
+      setTimeout(() => {
+        params.then(resolve, reject);
+      });
+    } else {
+      resolve(params);
+    }
+  });
+};
+
+MyPromise.reject = (reason) => new MyPromise((resolve, reject) => {
+  reject(reason);
+});
+
+MyPromise.all = (promises) => new MyPromise((resolve, reject) => {
+  const index = 0;
+  const result = [];
+  function processValue(i, data) {
+    result[i] = data;
+    if (index === promises.length - 1) {
+      resolve(result);
+    }
+  }
+  if (promises.length === 0) {
+    resolve(result);
+  } else {
+    promises.forEach((promise, i) => {
+      MyPromise.resolve(promise).then((data) => {
+        processValue(i, data);
+      }, (error) => {
+        reject(error);
+      });
+    });
+  }
+});
+
+MyPromise.race = (promises) => new MyPromise((resolve, reject) => {
+  promises.forEach((promise) => {
+    MyPromise.resolve(promise).then((data) => {
+      resolve(data);
+    }, (err) => {
+      reject(err);
+    });
+  });
+});
 
 
 module.exports = MyPromise;
