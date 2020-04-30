@@ -1,5 +1,4 @@
-// const Promise = require('../src/promise');
-const Promise = require('../example/promise');
+const Promise = require('../src/promise');
 Promise.defer = Promise.deferred = function () {
   let dfd = {};
   dfd.promise = new Promise((resolve, reject) => {

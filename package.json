@@ -1,15 +1,20 @@
 {
   "name": "promise-code",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "es6 class Promise",
+  "main": "src/promise.js",
   "scripts": {
-    "test": "promises-aplus-tests ./test/index.js"
+    "test": "promises-aplus-tests ./test/index.js",
+    "lint": "eslint src/**",
+    "lint:fix": "eslint src/** --fix"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["promise", "promise-code", "class"],
+  "author": "XueDong Wang",
+  "license": "MIT",
   "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.2",
     "promises-aplus-tests": "^2.1.2"
   }
 }

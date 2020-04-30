@@ -1,0 +1,24 @@
+language: node_js
+
+node_js: "10.13.0"
+
+cache:
+  directories:
+    - node_modules
+install:
+  - npm i
+script:
+  - npm run test
+after_script:
+  - git clone https://${GH_REF} .temp
+  - git config user.name "${U_NAME}"
+  - git config user.email "${U_EMAIL}"
+  - git add .
+  - git commit -m ":construction_worker:- Build & Deploy by Travis CI"
+  - git push
+# E: Build LifeCycle
+
+# 只有指定的分支提交时才会运行脚本
+branches:
+  only:
+    - master
